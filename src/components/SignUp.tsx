@@ -3,7 +3,7 @@ import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mu
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const schema = z
   .object({
@@ -20,6 +20,8 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 export const Signup: React.FC = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -30,9 +32,7 @@ export const Signup: React.FC = () => {
     reValidateMode: 'onChange',
   });
 
-  const onSubmit = async (data: FormData) => {
-    // Logic for form submission (not included in UI)
-  };
+  const onSubmit = async (data: FormData) => {};
 
   return (
     <Container maxWidth="sm">
