@@ -1,8 +1,44 @@
 import React from 'react';
 import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { useAuth } from './AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+
+const schema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password required'),
+});
+
+type FormData = z.infer<typeof schema>;
 
 export const Signin: React.FC = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    reValidateMode: 'onChange',
+  });
+
+  const onSubmit = async (data: FormData) => {
+    try {
+      await login(data.email, data.password);
+      navigate('/');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+        alert('An unknown error occurred');
+      }
+    }
+  };
+
   return (
     <Container maxWidth="sm">
       <Box
@@ -17,13 +53,35 @@ export const Signin: React.FC = () => {
             Sign In
           </Typography>
 
-          <Box component="form" noValidate>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
             <Stack spacing={2}>
-              <TextField label="Email" type="email" fullWidth autoFocus />
+              <TextField
+                label="Email"
+                type="email"
+                fullWidth
+                autoFocus
+                {...register('email')}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
 
-              <TextField label="Password" type="password" fullWidth />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                {...register('password')}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
 
-              <Button type="submit" variant="contained" size="large" fullWidth sx={{ mt: 1 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={!isValid || isSubmitting}
+                sx={{ mt: 1 }}
+              >
                 Sign In
               </Button>
             </Stack>
