@@ -3,6 +3,7 @@ import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mu
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
 const schema = z
@@ -20,6 +21,7 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 export const Signup: React.FC = () => {
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -32,7 +34,22 @@ export const Signup: React.FC = () => {
     reValidateMode: 'onChange',
   });
 
-  const onSubmit = async (data: FormData) => {};
+  const onSubmit = async (data: FormData) => {
+    try {
+      await signup({
+        fullName: data.fullName,
+        email: data.email,
+        password: data.password,
+      });
+      navigate('/signin');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        alert(err.message);
+      } else {
+        alert('An unknown error occurred');
+      }
+    }
+  };
 
   return (
     <Container maxWidth="sm">
