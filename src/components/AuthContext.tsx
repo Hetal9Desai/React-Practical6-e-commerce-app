@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string) => {
     const raw = localStorage.getItem('users');
     const users: User[] = raw ? JSON.parse(raw) : [];
-    const found = users.find(u => u.email === email && u.password === password);
+    const found = users.find(user => user.email === email && user.password === password);
     if (!found) {
       return Promise.reject(new Error('Invalid email or password'));
     }
