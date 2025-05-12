@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Signup } from './components/SignUp';
-import { Signin } from './components/SignIn';
-import { AuthProvider } from './components/AuthContext';
+import { Signup } from '../src/components/SignUp/SignUp';
+import { Signin } from '../src/components/SignIn/SignIn';
+import { AuthProvider } from '../src/components/auth/AuthContext';
 
 const App = () => {
   return (

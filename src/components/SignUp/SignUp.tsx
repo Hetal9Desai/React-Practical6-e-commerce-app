@@ -3,7 +3,7 @@ import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mu
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../auth/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
 const schema = z
