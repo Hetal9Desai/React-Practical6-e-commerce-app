@@ -90,7 +90,7 @@ export const Signin: React.FC = () => {
           </Box>
 
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
-            Don’t have an account?{' '}
+            Don't have an account?{' '}
             <Link to="/signup" style={{ textDecoration: 'none', color: '#1976d2' }}>
               Sign Up
             </Link>

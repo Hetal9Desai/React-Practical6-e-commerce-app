@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import type { User } from '../../types/User/types';
 
 const schema = z
@@ -43,6 +44,7 @@ export const Signup: React.FC = () => {
       }
 
       const newUser: User = {
+        id: uuidv4(),
         fullName: data.fullName,
         email: data.email,
         password: data.password,

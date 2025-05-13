@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import React, { createContext, useContext, useState, type ReactNode, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import type { User } from '../../types/User/types';
 
 interface AuthContextType {
@@ -14,13 +15,29 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return saved ? JSON.parse(saved) : null;
   });
 
+  useEffect(() => {
+    const raw = localStorage.getItem('users');
+    if (raw) {
+      const users: User[] = JSON.parse(raw);
+
+      const updated: User[] = users.map(user => ({
+        ...user,
+        id: user.id ?? uuidv4(), // Only add id if it's missing
+      }));
+
+      localStorage.setItem('users', JSON.stringify(updated));
+    }
+  }, []);
+
   const login = async (email: string, password: string) => {
     const raw = localStorage.getItem('users');
     const users: User[] = raw ? JSON.parse(raw) : [];
+
     const found = users.find(user => user.email === email && user.password === password);
     if (!found) {
       return Promise.reject(new Error('Invalid email or password'));
     }
+
     localStorage.setItem('currentUser', JSON.stringify(found));
     setUser(found);
   };
