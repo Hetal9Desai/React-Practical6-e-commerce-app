@@ -3,8 +3,8 @@ import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mu
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAuth } from '../auth/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import type { User } from '../../types/User/types';
 
 const schema = z
   .object({
@@ -21,7 +21,6 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 export const Signup: React.FC = () => {
-  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -36,11 +35,22 @@ export const Signup: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await signup({
+      const raw = localStorage.getItem('users');
+      const users: User[] = raw ? JSON.parse(raw) : [];
+
+      if (users.some(user => user.email === data.email)) {
+        throw new Error('Email already registered');
+      }
+
+      const newUser: User = {
         fullName: data.fullName,
         email: data.email,
         password: data.password,
-      });
+      };
+
+      users.push(newUser);
+      localStorage.setItem('users', JSON.stringify(users));
+
       navigate('/signin');
     } catch (err: unknown) {
       if (err instanceof Error) {

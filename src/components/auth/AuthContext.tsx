@@ -3,9 +3,7 @@ import type { User } from '../../types/User/types';
 
 interface AuthContextType {
   user: User | null;
-  signup: (user: User) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,18 +13,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const saved = localStorage.getItem('currentUser');
     return saved ? JSON.parse(saved) : null;
   });
-
-  const signup = async ({ fullName, email, password }: User) => {
-    const raw = localStorage.getItem('users');
-    const users: User[] = raw ? JSON.parse(raw) : [];
-
-    if (users.some(user => user.email === email)) {
-      return Promise.reject(new Error('Email already registered'));
-    }
-
-    users.push({ fullName, email, password });
-    localStorage.setItem('users', JSON.stringify(users));
-  };
 
   const login = async (email: string, password: string) => {
     const raw = localStorage.getItem('users');
@@ -39,14 +25,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(found);
   };
 
-  const logout = () => {
-    localStorage.removeItem('currentUser');
-    setUser(null);
-  };
-
-  return (
-    <AuthContext.Provider value={{ user, signup, login, logout }}>{children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, login }}>{children}</AuthContext.Provider>;
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

@@ -1,10 +1,10 @@
 import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '../auth/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
 
 const schema = z.object({
   email: z.string().email('Invalid email address'),
@@ -30,10 +30,12 @@ export const Signin: React.FC = () => {
   const onSubmit = async (data: FormData) => {
     try {
       await login(data.email, data.password);
+      alert('SignIn Successful!');
       navigate('/');
     } catch (err: unknown) {
       if (err instanceof Error) {
         alert(err.message);
+      } else {
         alert('An unknown error occurred');
       }
     }
