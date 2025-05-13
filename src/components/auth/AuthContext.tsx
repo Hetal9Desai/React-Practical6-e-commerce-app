@@ -22,7 +22,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
       const updated: User[] = users.map(user => ({
         ...user,
-        id: user.id ?? uuidv4(), // Only add id if it's missing
+        id: user.id ?? uuidv4(),
       }));
 
       localStorage.setItem('users', JSON.stringify(updated));
