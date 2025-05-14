@@ -1,4 +1,3 @@
-// src/components/Header/SearchBar.tsx
 import React from 'react';
 import { TextField } from '@mui/material';
 import { useSearch } from '../Header/SearchContext';
