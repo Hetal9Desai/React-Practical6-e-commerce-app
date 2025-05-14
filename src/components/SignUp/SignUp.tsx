@@ -6,11 +6,11 @@ import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import type { User } from '../../types/User/types';
-import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils'; // 👈 import your utility
+import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
 
 const schema = z
   .object({
-    id: z.string().min(1).uuid().optional(),
+    id: z.string().optional(),
     fullName: z.string().min(3, 'Full name must be at least 3 characters'),
     email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -34,7 +34,6 @@ export const Signup: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onChange',
-    reValidateMode: 'onChange',
   });
 
   const onSubmit = async (data: FormData) => {
@@ -58,7 +57,7 @@ export const Signup: React.FC = () => {
     };
 
     users.push(newUser);
-    setToLocalStorage('users', users); // 👈 use utility
+    setToLocalStorage('users', users);
 
     navigate('/signin');
   };

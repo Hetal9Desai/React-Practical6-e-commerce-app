@@ -24,7 +24,6 @@ export const Signin: React.FC = () => {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onChange',
-    reValidateMode: 'onChange',
   });
 
   const onSubmit = async (data: FormData) => {
