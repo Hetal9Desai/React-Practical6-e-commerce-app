@@ -6,6 +6,7 @@ import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import type { User } from '../../types/User/types';
+import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils'; // 👈 import your utility
 
 const schema = z
   .object({
@@ -29,6 +30,7 @@ export const Signup: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
+    setError,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     mode: 'onChange',
@@ -36,32 +38,29 @@ export const Signup: React.FC = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    try {
-      const raw = localStorage.getItem('users');
-      const users: User[] = raw ? JSON.parse(raw) : [];
+    const users = getFromLocalStorage<User[]>('users') || [];
 
-      if (users.some(user => user.email === data.email)) {
-        throw new Error('Email already registered');
-      }
+    const emailExists = users.some(user => user.email === data.email);
 
-      const newUser: User = {
-        id: uuidv4(),
-        fullName: data.fullName,
-        email: data.email,
-        password: data.password,
-      };
-
-      users.push(newUser);
-      localStorage.setItem('users', JSON.stringify(users));
-
-      navigate('/signin');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        alert(err.message);
-      } else {
-        alert('An unknown error occurred');
-      }
+    if (emailExists) {
+      setError('email', {
+        type: 'manual',
+        message: 'Email is already registered',
+      });
+      return;
     }
+
+    const newUser: User = {
+      id: uuidv4(),
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+    };
+
+    users.push(newUser);
+    setToLocalStorage('users', users); // 👈 use utility
+
+    navigate('/signin');
   };
 
   return (
