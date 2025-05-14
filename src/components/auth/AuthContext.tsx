@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState, type ReactNode } from 'react';
-import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
+import { getFromLocalStorage } from '../../utils/storageUtils';
 import type { User } from '../../types/User/types';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -14,20 +14,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return getFromLocalStorage<User>('currentUser');
   });
 
-  const login = async (email: string, password: string) => {
-    const users = getFromLocalStorage<User[]>('users') || [];
-    const found = users.find(user => user.email === email && user.password === password);
-    if (!found) {
-      return Promise.reject(new Error('Invalid email or password'));
-    }
-    setToLocalStorage('currentUser', found);
-    setUser(found);
-  };
-
-  return <AuthContext.Provider value={{ user, login }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
