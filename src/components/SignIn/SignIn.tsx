@@ -6,10 +6,10 @@ import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils
 import { useAuth } from '../auth/AuthContext';
 import type { User } from '../../types/User/types';
 
-type FormData = {
+interface UserLoginFormFields {
   email: string;
   password: string;
-};
+}
 
 export const Signin: React.FC = () => {
   const { setUser } = useAuth();
@@ -19,12 +19,14 @@ export const Signin: React.FC = () => {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<FormData>();
+  } = useForm<UserLoginFormFields>();
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: UserLoginFormFields) => {
     try {
       const users = getFromLocalStorage<User[]>('users') || [];
-      const found = users.find(u => u.email === data.email && u.password === data.password);
+      const found = users.find(
+        user => user.email === data.email && user.password === data.password,
+      );
       if (!found) throw new Error('Invalid email or password');
 
       setToLocalStorage('currentUser', found);

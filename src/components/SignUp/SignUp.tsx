@@ -13,14 +13,14 @@ const schema = z
     fullName: z.string().min(3, 'Full name must be at least 3 characters'),
     email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirm: z.string(),
+    confirmPassword: z.string(),
   })
-  .refine(data => data.password === data.confirm, {
+  .refine(data => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirm'],
+    path: ['confirmPassword'],
   });
 
-type FormData = z.infer<typeof schema>;
+type UserSignupFormFields = z.infer<typeof schema>;
 
 export const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -30,12 +30,12 @@ export const Signup: React.FC = () => {
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
     setError,
-  } = useForm<FormData>({
+  } = useForm<UserSignupFormFields>({
     resolver: zodResolver(schema),
     mode: 'onChange',
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = (data: UserSignupFormFields) => {
     const users = getFromLocalStorage<User[]>('users') || [];
 
     if (users.some(user => user.email === data.email)) {
@@ -100,9 +100,9 @@ export const Signup: React.FC = () => {
                 label="Confirm Password"
                 type="password"
                 fullWidth
-                {...register('confirm')}
-                error={!!errors.confirm}
-                helperText={errors.confirm?.message}
+                {...register('confirmPassword')}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
               />
 
               <Button
