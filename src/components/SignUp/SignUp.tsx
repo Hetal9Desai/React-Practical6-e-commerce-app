@@ -46,16 +46,12 @@ export const Signup: React.FC = () => {
       return;
     }
 
-<<<<<<< HEAD
     const newUser: User = {
       id: crypto.randomUUID(),
       fullName: data.fullName,
       email: data.email,
       password: data.password,
     };
-=======
-    const newUser: User = { ...data, id: uuidv4() };
->>>>>>> cd2e8304e06777646aa2f0beb6280f888ffa8a08
 
     users.push(newUser);
 
