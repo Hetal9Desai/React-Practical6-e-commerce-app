@@ -2,33 +2,34 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
 import { useAuth } from '../auth/AuthContext';
+import type { User } from '../../types/User/types';
 
-const schema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(1, 'Password required'),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = {
+  email: string;
+  password: string;
+};
 
 export const Signin: React.FC = () => {
-  const { login } = useAuth();
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
-  } = useForm<FormData>({
-    resolver: zodResolver(schema),
-    mode: 'onChange',
-  });
+    formState: { isSubmitting },
+  } = useForm<FormData>();
 
   const onSubmit = async (data: FormData) => {
     try {
-      await login(data.email, data.password);
+      const users = getFromLocalStorage<User[]>('users') || [];
+      const found = users.find(u => u.email === data.email && u.password === data.password);
+      if (!found) throw new Error('Invalid email or password');
+
+      setToLocalStorage('currentUser', found);
+      setUser(found);
+
       alert('SignIn Successful!');
       navigate('/');
     } catch (err: unknown) {
@@ -42,13 +43,7 @@ export const Signin: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          mt: 8,
-        }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
         <Paper elevation={4} sx={{ p: 4, width: '100%' }}>
           <Typography variant="h4" align="center" gutterBottom>
             Sign In
@@ -56,31 +51,14 @@ export const Signin: React.FC = () => {
 
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
             <Stack spacing={2}>
-              <TextField
-                label="Email"
-                type="email"
-                fullWidth
-                autoFocus
-                {...register('email')}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-
-              <TextField
-                label="Password"
-                type="password"
-                fullWidth
-                {...register('password')}
-                error={!!errors.password}
-                helperText={errors.password?.message}
-              />
-
+              <TextField label="Email" type="email" fullWidth autoFocus {...register('email')} />
+              <TextField label="Password" type="password" fullWidth {...register('password')} />
               <Button
                 type="submit"
                 variant="contained"
                 size="large"
                 fullWidth
-                disabled={!isValid || isSubmitting}
+                disabled={isSubmitting}
                 sx={{ mt: 1 }}
               >
                 Sign In

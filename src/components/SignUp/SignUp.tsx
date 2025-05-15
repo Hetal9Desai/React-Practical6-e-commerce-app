@@ -35,12 +35,10 @@ export const Signup: React.FC = () => {
     mode: 'onChange',
   });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = (data: FormData) => {
     const users = getFromLocalStorage<User[]>('users') || [];
 
-    const emailExists = users.some(user => user.email === data.email);
-
-    if (emailExists) {
+    if (users.some(user => user.email === data.email)) {
       setError('email', {
         type: 'manual',
         message: 'Email is already registered',
@@ -48,28 +46,26 @@ export const Signup: React.FC = () => {
       return;
     }
 
+<<<<<<< HEAD
     const newUser: User = {
       id: crypto.randomUUID(),
       fullName: data.fullName,
       email: data.email,
       password: data.password,
     };
+=======
+    const newUser: User = { ...data, id: uuidv4() };
+>>>>>>> cd2e8304e06777646aa2f0beb6280f888ffa8a08
 
     users.push(newUser);
-    setToLocalStorage('users', users);
 
+    setToLocalStorage('users', users);
     navigate('/signin');
   };
 
   return (
     <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          mt: 8,
-        }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
         <Paper elevation={4} sx={{ p: 4, width: '100%' }}>
           <Typography variant="h4" align="center" gutterBottom>
             Create Account
