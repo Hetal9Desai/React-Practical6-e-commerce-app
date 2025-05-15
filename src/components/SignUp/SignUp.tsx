@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate, Link } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 import type { User } from '../../types/User/types';
 import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
 
@@ -50,7 +49,7 @@ export const Signup: React.FC = () => {
     }
 
     const newUser: User = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       fullName: data.fullName,
       email: data.email,
       password: data.password,
@@ -129,7 +128,7 @@ export const Signup: React.FC = () => {
 
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
             Already have an account?{' '}
-            <Link to="/signin" style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <Link to="/" style={{ textDecoration: 'none', color: '#1976d2' }}>
               Sign In
             </Link>
           </Typography>
