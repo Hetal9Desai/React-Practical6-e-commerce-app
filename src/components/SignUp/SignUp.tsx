@@ -9,7 +9,7 @@ import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils
 
 const schema = z
   .object({
-    id: z.string().optional(),
+    id: z.string(),
     fullName: z.string().min(3, 'Full name must be at least 3 characters'),
     email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -25,6 +25,14 @@ type UserSignupFormFields = z.infer<typeof schema>;
 export const Signup: React.FC = () => {
   const navigate = useNavigate();
 
+  const defaultValue = {
+    id: '',
+    name: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+  };
+
   const {
     register,
     handleSubmit,
@@ -33,6 +41,7 @@ export const Signup: React.FC = () => {
   } = useForm<UserSignupFormFields>({
     resolver: zodResolver(schema),
     mode: 'onChange',
+    defaultValues: defaultValue,
   });
 
   const onSubmit = (data: UserSignupFormFields) => {
