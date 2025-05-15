@@ -56,7 +56,7 @@ export const Signup: React.FC = () => {
     users.push(newUser);
 
     setToLocalStorage('users', users);
-    navigate('/signin');
+    navigate('/');
   };
 
   return (
