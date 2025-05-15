@@ -1,20 +1,37 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from '../src/components/AuthContext';
+import { Layout } from './components/Layout/Layout';
 import { Signup } from './components/SignUp';
 import { Signin } from './components/SignIn';
-import { AuthProvider } from './components/AuthContext';
+import { ProductsPage } from './components/Product/ProductsPage';
+import { ProfilePage } from './components/Header/ProfilePage';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
-const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
+const App: React.FC = () => (
+  <AuthProvider>
+    <BrowserRouter>
+      <Layout>
         <Routes>
-          <Route path="/" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
+          {/* public */}
+          <Route path="/" element={<Navigate to="/signin" replace />} />
           <Route path="/signin" element={<Signin />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* protected */}
+          <Route path="/products" element={<ProtectedRoute />}>
+            <Route index element={<ProductsPage />} />
+          </Route>
+          <Route path="/profile" element={<ProtectedRoute />}>
+            <Route index element={<ProfilePage />} />
+          </Route>
+
+          {/* fallback */}
+          <Route path="*" element={<Navigate to="/signin" replace />} />
         </Routes>
-      </Router>
-    </AuthProvider>
-  );
-};
+      </Layout>
+    </BrowserRouter>
+  </AuthProvider>
+);
 
 export default App;

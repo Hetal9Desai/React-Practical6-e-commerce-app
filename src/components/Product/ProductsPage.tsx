@@ -5,7 +5,7 @@ import { DesktopSidebar } from '../Product/DesktopSidebar';
 import { MobileFilterDrawer } from '../Product/MobileFilterDrawer';
 import type { Product } from '../../types/Product/Product';
 import { useSearch } from '../Header/SearchContext';
-import type { SidebarFilters, SortOption } from '../Sidebar/types';
+import type { SidebarFilters, SortOption } from '../../types/Sidebar/types';
 
 const PAGE_SIZE = 20;
 

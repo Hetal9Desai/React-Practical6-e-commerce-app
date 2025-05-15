@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { Sidebar } from '../Sidebar/sidebar';
-import type { SidebarFilters, SortOption } from '../Sidebar/types';
+import type { SidebarFilters, SortOption } from '../../types/Sidebar/types';
 import type { Product } from '../../types/Product/Product';
 
 interface DesktopSidebarProps {

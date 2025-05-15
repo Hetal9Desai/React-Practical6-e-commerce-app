@@ -1,4 +1,3 @@
-// src/components/Product/ProductCard.tsx
 import React from 'react';
 import { Card, CardMedia, CardContent, Box, Typography, Rating } from '@mui/material';
 import type { Product } from '../../types/Product/Product';

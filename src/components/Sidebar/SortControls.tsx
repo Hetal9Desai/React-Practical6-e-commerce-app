@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import type { SortOption } from './types';
+import type { SortOption } from '../../types/Sidebar/types';
 
 interface Props {
   sortOption: SortOption;

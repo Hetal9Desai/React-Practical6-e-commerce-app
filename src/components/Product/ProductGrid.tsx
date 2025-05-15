@@ -1,4 +1,3 @@
-// src/components/Product/ProductGrid.tsx
 import React from 'react';
 import { Box } from '@mui/material';
 import { ProductCard } from './ProductCard';

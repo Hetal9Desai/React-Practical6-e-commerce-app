@@ -5,7 +5,7 @@ import { CategoryFilter } from './CategoryFilters';
 import { BrandFilter } from './BrandFilter';
 import { PriceFilter } from './PriceFilter';
 import { RatingFilter } from './RatingFilter';
-import type { SidebarFilters, SortOption } from './types';
+import type { SidebarFilters, SortOption } from '../../types/Sidebar/types';
 
 interface Props {
   categories: string[];
@@ -28,7 +28,6 @@ export const Sidebar: React.FC<Props> = ({
   const [ratings, setRatings] = useState<[number, number][]>([]);
   const first = useRef(true);
 
-  // notify parent once on every change (skip initial mount)
   useEffect(() => {
     if (first.current) {
       first.current = false;

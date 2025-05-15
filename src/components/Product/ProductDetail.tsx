@@ -1,4 +1,3 @@
-// src/components/Product/ProductDetail.tsx
 import React from 'react';
 import { Box, Paper, IconButton, Typography, Rating } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';

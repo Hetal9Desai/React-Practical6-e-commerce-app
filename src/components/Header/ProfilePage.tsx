@@ -11,7 +11,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../AuthContext';
 
 export const ProfilePage: React.FC = () => {
   const { user, updateProfile } = useAuth();
