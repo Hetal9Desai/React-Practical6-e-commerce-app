@@ -27,10 +27,10 @@ export const Signup: React.FC = () => {
 
   const defaultValue = {
     id: '',
-    name: '',
+    fullname: '',
     email: '',
-    phoneNumber: '',
     password: '',
+    confirmPassword: '',
   };
 
   const {
