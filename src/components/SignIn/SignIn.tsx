@@ -33,7 +33,7 @@ export const Signin: React.FC = () => {
       setUser(found);
 
       alert('SignIn Successful!');
-      navigate('/');
+      navigate('/product');
     } catch (err: unknown) {
       if (err instanceof Error) {
         alert(err.message);

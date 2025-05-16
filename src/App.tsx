@@ -9,7 +9,7 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route
-          path="/"
+          path="/signin"
           element={
             <AuthProvider>
               <Signin />
