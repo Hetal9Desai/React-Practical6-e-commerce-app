@@ -1,8 +1,8 @@
 import React from 'react';
-import type { Product } from '../types/Product/Product';
-import { Loading } from '../components/Product/Loading';
-import { ProductGrid } from '../components/Product/ProductGrid';
-import { ProductDetail } from '../components/Product/ProductDetail';
+import type { Product } from '../../types/Product/Product';
+import { Loading } from '../Product/Loading';
+import { ProductGrid } from '../Product/ProductGrid';
+import { ProductDetail } from '../Product/ProductDetail';
 
 interface MainContentProps {
   products: Product[];
