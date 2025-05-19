@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './components/AuthContext';
+import { AuthProvider } from './components/auth/AuthContext';
 import { Signup } from './components/SignUp/SignUp';
 import { Signin } from './components/SignIn/SignIn';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
