@@ -8,7 +8,7 @@ interface MainContentProps {
   products: Product[];
   loading: boolean;
   selected: Product | null;
-  onSelect: (p: Product) => void;
+  onSelect: (product: Product) => void;
   onClose: () => void;
 }
 

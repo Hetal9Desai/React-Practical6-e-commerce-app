@@ -5,7 +5,7 @@ import type { Product } from '../../types/Product/Product';
 
 interface ProductGridProps {
   products: Product[];
-  onSelect: (p: Product) => void;
+  onSelect: (product: Product) => void;
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelect }) => (
@@ -17,8 +17,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelect }) 
         gap: 2,
       }}
     >
-      {products.map(p => (
-        <ProductCard key={p.id} product={p} onClick={() => onSelect(p)} />
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} onClick={() => onSelect(product)} />
       ))}
     </Box>
   </Box>

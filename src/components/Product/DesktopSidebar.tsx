@@ -19,8 +19,11 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
 }) => {
   const theme = useTheme();
 
-  const categories = useMemo(() => [...new Set(products.map(p => p.category))], [products]);
-  const brands = useMemo(() => [...new Set(products.map(p => p.brand))], [products]);
+  const categories = useMemo(
+    () => [...new Set(products.map(product => product.category))],
+    [products],
+  );
+  const brands = useMemo(() => [...new Set(products.map(product => product.brand))], [products]);
 
   return (
     <Box

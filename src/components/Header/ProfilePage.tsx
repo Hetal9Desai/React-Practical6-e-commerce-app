@@ -11,29 +11,70 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material';
-import { useAuth } from '../AuthContext';
+import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
+import type { User } from '../../types/User/types';
 
 export const ProfilePage: React.FC = () => {
-  const { user, updateProfile } = useAuth();
-  const [fullName, setFullName] = useState(user?.fullName ?? '');
-  const [email, setEmail] = useState(user?.email ?? '');
-  const [saving, setSaving] = useState(false);
-  const [snack, setSnack] = useState<{ open: boolean; msg: string; sev: 'success' | 'error' }>({
+  const currentUser = getFromLocalStorage<User>('currentUser');
+  const [fullName, setFullName] = useState(currentUser?.fullName ?? '');
+  const [email, setEmail] = useState(currentUser?.email ?? '');
+  const [isSaving, setIsSaving] = useState(false);
+  const [snackbarState, setSnackbarState] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({
     open: false,
-    msg: '',
-    sev: 'success',
+    message: '',
+    severity: 'success',
   });
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
+  const onSubmit = (event: FormEvent) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      setSnackbarState({
+        open: true,
+        message: 'No user found to update',
+        severity: 'error',
+      });
+      return;
+    }
+
+    setIsSaving(true);
     try {
-      await updateProfile({ fullName, email });
-      setSnack({ open: true, msg: 'Profile updated!', sev: 'success' });
-    } catch (err: any) {
-      setSnack({ open: true, msg: err.message || 'Update failed', sev: 'error' });
+      const allUsers = getFromLocalStorage<User[]>('users') ?? [];
+      const updatedUsers = allUsers.map(existingUser =>
+        existingUser.email === currentUser.email
+          ? { ...existingUser, fullName, email }
+          : existingUser,
+      );
+      setToLocalStorage('users', updatedUsers);
+
+      const updatedCurrentUser: User = { ...currentUser, fullName, email };
+      setToLocalStorage('currentUser', updatedCurrentUser);
+
+      setSnackbarState({
+        open: true,
+        message: 'Profile updated!',
+        severity: 'success',
+      });
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setSnackbarState({
+          open: true,
+          message: error.message || 'Update failed',
+          severity: 'error',
+        });
+      } else {
+        setSnackbarState({
+          open: true,
+          message: 'An unknown error occurred',
+          severity: 'error',
+        });
+      }
     } finally {
-      setSaving(false);
+      setIsSaving(false);
     }
   };
 
@@ -42,11 +83,11 @@ export const ProfilePage: React.FC = () => {
       <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
         <Box display="flex" flexDirection="column" alignItems="center">
           <Avatar sx={{ bgcolor: '#D93025', width: 64, height: 64, mb: 2, fontSize: 32 }}>
-            {user?.fullName?.[0].toUpperCase() || '?'}
+            {fullName?.[0]?.toUpperCase() || '?'}
           </Avatar>
-          <Typography variant="h5">{user?.fullName}</Typography>
+          <Typography variant="h5">{fullName}</Typography>
           <Typography variant="body2" color="text.secondary">
-            {user?.email}
+            {email}
           </Typography>
         </Box>
 
@@ -67,21 +108,21 @@ export const ProfilePage: React.FC = () => {
               fullWidth
               required
             />
-            <Button variant="contained" type="submit" disabled={saving}>
-              {saving ? 'Saving…' : 'Save Changes'}
+            <Button variant="contained" type="submit" disabled={isSaving}>
+              {isSaving ? 'Saving…' : 'Save Changes'}
             </Button>
           </Stack>
         </Box>
       </Paper>
 
       <Snackbar
-        open={snack.open}
+        open={snackbarState.open}
         autoHideDuration={3000}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        onClose={() => setSnack(s => ({ ...s, open: false }))}
+        onClose={() => setSnackbarState(prevState => ({ ...prevState, open: false }))}
       >
-        <Alert severity={snack.sev} variant="filled">
-          {snack.msg}
+        <Alert severity={snackbarState.severity} variant="filled">
+          {snackbarState.message}
         </Alert>
       </Snackbar>
     </Container>

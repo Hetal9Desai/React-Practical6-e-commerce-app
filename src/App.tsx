@@ -6,7 +6,7 @@ import { Signup } from './components/SignUp';
 import { Signin } from './components/SignIn';
 import { ProductsPage } from './components/Product/ProductsPage';
 import { ProfilePage } from './components/Header/ProfilePage';
-import { ProtectedRoute } from './components/ProtectedRoute';
+import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 
 const App: React.FC = () => (
   <AuthProvider>
