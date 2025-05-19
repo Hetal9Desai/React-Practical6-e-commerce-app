@@ -1,20 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Signup } from './components/SignUp';
-import { Signin } from './components/SignIn';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './components/AuthContext';
 
-const App = () => {
-  return (
-    <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Signin />} />
-          <Route path="/signup" element={<Signup />} />
+import { Signup } from './components/SignUp';
+import { Signin } from './components/SignIn';
+
+import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
+
+const App: React.FC = () => (
+  <AuthProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<ProtectedRoute reverse />}>
           <Route path="/signin" element={<Signin />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
-  );
-};
+          <Route path="/signup" element={<Signup />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </AuthProvider>
+);
 
 export default App;
