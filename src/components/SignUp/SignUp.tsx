@@ -65,7 +65,7 @@ export const Signup: React.FC = () => {
     users.push(newUser);
 
     setToLocalStorage('users', users);
-    navigate('/signin');
+    navigate('/login');
   };
 
   return (
@@ -129,7 +129,7 @@ export const Signup: React.FC = () => {
 
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
             Already have an account?{' '}
-            <Link to="/signin" style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <Link to="/login" style={{ textDecoration: 'none', color: '#1976d2' }}>
               Sign In
             </Link>
           </Typography>

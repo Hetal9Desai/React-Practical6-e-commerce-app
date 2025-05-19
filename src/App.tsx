@@ -10,7 +10,14 @@ const App: React.FC = () => (
     <BrowserRouter>
       <Routes>
         <Route element={<ProtectedRoute reverse />}>
-          <Route path="/signin" element={<Signin />} />
+          <Route
+            path="/login"
+            element={
+              <AuthProvider>
+                <Signin />
+              </AuthProvider>
+            }
+          />
           <Route path="/signup" element={<Signup />} />
         </Route>
       </Routes>
