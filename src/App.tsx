@@ -6,23 +6,21 @@ import { Signin } from './components/SignIn/SignIn';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 
 const App: React.FC = () => (
-  <AuthProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route element={<ProtectedRoute reverse />}>
-          <Route
-            path="/login"
-            element={
-              <AuthProvider>
-                <Signin />
-              </AuthProvider>
-            }
-          />
-          <Route path="/signup" element={<Signup />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </AuthProvider>
+  <BrowserRouter>
+    <Routes>
+      <Route element={<ProtectedRoute reverse />}>
+        <Route
+          path="/login"
+          element={
+            <AuthProvider>
+              <Signin />
+            </AuthProvider>
+          }
+        />
+        <Route path="/signup" element={<Signup />} />
+      </Route>
+    </Routes>
+  </BrowserRouter>
 );
 
 export default App;
