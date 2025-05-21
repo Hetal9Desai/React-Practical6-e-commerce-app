@@ -60,7 +60,6 @@ export const ProfilePage: React.FC = () => {
         severity: 'success',
       });
     } catch (error: unknown) {
-      // Type narrowing
       if (error instanceof Error) {
         setSnackbarState({
           open: true,
