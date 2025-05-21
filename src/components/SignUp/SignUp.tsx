@@ -1,5 +1,15 @@
-import React from 'react';
-import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Stack,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -43,6 +53,7 @@ export const Signup: React.FC = () => {
     mode: 'onChange',
     defaultValues: defaultValue,
   });
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
   const onSubmit = (data: UserSignupFormFields) => {
     const users = getFromLocalStorage<User[]>('users') || [];
@@ -65,7 +76,13 @@ export const Signup: React.FC = () => {
     users.push(newUser);
 
     setToLocalStorage('users', users);
-    navigate('/login');
+    setOpenSnackbar(true);
+  };
+
+  const handleSnackbarClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+    setOpenSnackbar(false);
+    navigate('/signin');
   };
 
   return (
@@ -129,12 +146,28 @@ export const Signup: React.FC = () => {
 
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
             Already have an account?{' '}
-            <Link to="/login" style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <Link to="/signin" style={{ textDecoration: 'none', color: '#1976d2' }}>
               Sign In
             </Link>
           </Typography>
         </Paper>
       </Box>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Signup successful!
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
