@@ -3,63 +3,74 @@ import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mu
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import type { User } from '../../types/User/types';
+import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
 
 const schema = z
   .object({
+    id: z.string(),
     fullName: z.string().min(3, 'Full name must be at least 3 characters'),
     email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    confirm: z.string(),
+    confirmPassword: z.string(),
   })
-  .refine(data => data.password === data.confirm, {
+  .refine(data => data.password === data.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirm'],
+    path: ['confirmPassword'],
   });
 
-type FormData = z.infer<typeof schema>;
+type UserSignupFormFields = z.infer<typeof schema>;
 
 export const Signup: React.FC = () => {
-  const { signup } = useAuth();
   const navigate = useNavigate();
+
+  const defaultValue = {
+    id: '',
+    fullname: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  };
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<FormData>({
+    setError,
+  } = useForm<UserSignupFormFields>({
     resolver: zodResolver(schema),
     mode: 'onChange',
-    reValidateMode: 'onChange',
+    defaultValues: defaultValue,
   });
 
-  const onSubmit = async (data: FormData) => {
-    try {
-      await signup({
-        fullName: data.fullName,
-        email: data.email,
-        password: data.password,
+  const onSubmit = (data: UserSignupFormFields) => {
+    const users = getFromLocalStorage<User[]>('users') || [];
+
+    if (users.some(user => user.email === data.email)) {
+      setError('email', {
+        type: 'manual',
+        message: 'Email is already registered',
       });
-      navigate('/signin');
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        alert(err.message);
-      } else {
-        alert('An unknown error occurred');
-      }
+      return;
     }
+
+    const newUser: User = {
+      id: crypto.randomUUID(),
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+    };
+
+    users.push(newUser);
+
+    setToLocalStorage('users', users);
+    navigate('/login');
   };
 
   return (
     <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          mt: 8,
-        }}
-      >
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
         <Paper elevation={4} sx={{ p: 4, width: '100%' }}>
           <Typography variant="h4" align="center" gutterBottom>
             Create Account
@@ -98,9 +109,9 @@ export const Signup: React.FC = () => {
                 label="Confirm Password"
                 type="password"
                 fullWidth
-                {...register('confirm')}
-                error={!!errors.confirm}
-                helperText={errors.confirm?.message}
+                {...register('confirmPassword')}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
               />
 
               <Button
@@ -118,7 +129,7 @@ export const Signup: React.FC = () => {
 
           <Typography variant="body2" align="center" sx={{ mt: 3 }}>
             Already have an account?{' '}
-            <Link to="/signin" style={{ textDecoration: 'none', color: '#1976d2' }}>
+            <Link to="/login" style={{ textDecoration: 'none', color: '#1976d2' }}>
               Sign In
             </Link>
           </Typography>

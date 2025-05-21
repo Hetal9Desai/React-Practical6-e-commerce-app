@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '../src/components/AuthContext';
+import { AuthProvider } from '../src/components/auth/AuthContext';
 import { Layout } from './components/Layout/Layout';
-import { Signup } from './components/SignUp';
-import { Signin } from './components/SignIn';
+import { Signup } from './components/SignUp/SignUp';
+import { Signin } from './components/SignIn/SignIn';
 import { ProductsPage } from './components/Product/ProductsPage';
 import { ProfilePage } from './components/Header/ProfilePage';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
