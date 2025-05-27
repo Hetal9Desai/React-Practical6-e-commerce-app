@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Box } from '@mui/material';
 import { SortControls } from './SortControls';
 import { CategoryFilter } from './CategoryFilters';
@@ -28,24 +28,90 @@ export const Sidebar: React.FC<Props> = ({
   const [selectedRatingRanges, setSelectedRatingRanges] = useState<[number, number][]>([]);
   const isFirstRender = useRef(true);
 
+  const updateURLParams = useCallback(() => {
+    const params = new URLSearchParams();
+
+    if (selectedCategories.length > 0) {
+      params.set('categories', selectedCategories.join(','));
+    }
+    if (selectedBrands.length > 0) {
+      params.set('brands', selectedBrands.join(','));
+    }
+    if (selectedPriceRanges.length > 0) {
+      params.set('priceRanges', selectedPriceRanges.map(r => r.join('-')).join(','));
+    }
+    if (selectedRatingRanges.length > 0) {
+      params.set('ratingRanges', selectedRatingRanges.map(r => r.join('-')).join(','));
+    }
+
+    params.set('sort', sortOption);
+
+    window.history.pushState({}, '', '?' + params.toString());
+  }, [selectedCategories, selectedBrands, selectedPriceRanges, selectedRatingRanges, sortOption]);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
+
     onFilterChange({
       categories: selectedCategories,
       brands: selectedBrands,
       priceRanges: selectedPriceRanges,
       ratingRanges: selectedRatingRanges,
     });
+
+    updateURLParams();
   }, [
     selectedCategories,
     selectedBrands,
     selectedPriceRanges,
     selectedRatingRanges,
+    sortOption,
     onFilterChange,
+    updateURLParams,
   ]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+
+    const categoriesFromUrl = params.get('categories')?.split(',') || [];
+    const brandsFromUrl = params.get('brands')?.split(',') || [];
+    const priceRangesFromUrl =
+      params
+        .get('priceRanges')
+        ?.split(',')
+        .map((range: string) => {
+          const [min, max] = range.split('-').map(Number);
+          return [min, max] as [number, number];
+        }) || [];
+    const ratingRangesFromUrl =
+      params
+        .get('ratingRanges')
+        ?.split(',')
+        .map((range: string) => {
+          const [min, max] = range.split('-').map(Number);
+          return [min, max] as [number, number];
+        }) || [];
+
+    setSelectedCategories(categoriesFromUrl);
+    setSelectedBrands(brandsFromUrl);
+    setSelectedPriceRanges(priceRangesFromUrl);
+    setSelectedRatingRanges(ratingRangesFromUrl);
+
+    onFilterChange({
+      categories: categoriesFromUrl,
+      brands: brandsFromUrl,
+      priceRanges: priceRangesFromUrl,
+      ratingRanges: ratingRangesFromUrl,
+    });
+
+    const sortFromUrl = params.get('sort') as SortOption;
+    if (sortFromUrl) {
+      onSortChange(sortFromUrl);
+    }
+  }, [onFilterChange, onSortChange]);
 
   const handleCategoryChange = (category: string, isChecked: boolean) =>
     setSelectedCategories(previous =>

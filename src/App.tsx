@@ -7,6 +7,7 @@ import { Signin } from './components/SignIn/SignIn';
 import { ProductsPage } from './components/Product/ProductsPage';
 import { ProfilePage } from './components/Header/ProfilePage';
 import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
+import { ErrorBoundary } from './components/Product/ErrorBoundary';
 
 const App: React.FC = () => (
   <AuthProvider>
@@ -19,8 +20,16 @@ const App: React.FC = () => (
           </Route>
 
           <Route path="/products" element={<ProtectedRoute />}>
-            <Route index element={<ProductsPage />} />
+            <Route
+              index
+              element={
+                <ErrorBoundary>
+                  <ProductsPage />
+                </ErrorBoundary>
+              }
+            />
           </Route>
+
           <Route path="/profile" element={<ProtectedRoute />}>
             <Route index element={<ProfilePage />} />
           </Route>
