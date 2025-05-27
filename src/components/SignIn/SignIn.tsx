@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Container, Paper, TextField, Button, Typography, Box, Stack } from '@mui/material';
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Stack,
+  Snackbar,
+  Alert,
+} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { getFromLocalStorage, setToLocalStorage } from '../../utils/storageUtils';
 import { useAuth } from '../auth/AuthContext';
@@ -14,14 +24,16 @@ interface UserLoginFormFields {
 export const Signin: React.FC = () => {
   const { setUser } = useAuth();
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<UserLoginFormFields>();
 
-  const onSubmit = async (data: UserLoginFormFields) => {
+  const [pendingUser, setPendingUser] = useState<User | null>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  const onSubmit = (data: UserLoginFormFields) => {
     try {
       const users = getFromLocalStorage<User[]>('users') || [];
       const found = users.find(
@@ -29,18 +41,24 @@ export const Signin: React.FC = () => {
       );
       if (!found) throw new Error('Invalid email or password');
 
-      setToLocalStorage('currentUser', found);
-      setUser(found);
-
-      alert('SignIn Successful!');
-      navigate('/product');
+      setPendingUser(found);
+      setOpenSnackbar(true);
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        alert(err.message);
-      } else {
-        alert('An unknown error occurred');
-      }
+      alert(err instanceof Error ? err.message : 'An unknown error occurred');
     }
+  };
+
+  const handleSnackbarClose = (_event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === 'clickaway') return;
+
+    if (pendingUser) {
+      setToLocalStorage('currentUser', pendingUser);
+      setUser(pendingUser);
+      setPendingUser(null);
+    }
+
+    setOpenSnackbar(false);
+    navigate('/products', { replace: true });
   };
 
   return (
@@ -53,8 +71,19 @@ export const Signin: React.FC = () => {
 
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
             <Stack spacing={2}>
-              <TextField label="Email" type="email" fullWidth autoFocus {...register('email')} />
-              <TextField label="Password" type="password" fullWidth {...register('password')} />
+              <TextField
+                label="Email"
+                type="email"
+                fullWidth
+                autoFocus
+                {...register('email', { required: true })}
+              />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                {...register('password', { required: true })}
+              />
               <Button
                 type="submit"
                 variant="contained"
@@ -76,6 +105,22 @@ export const Signin: React.FC = () => {
           </Typography>
         </Paper>
       </Box>
+
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Sign-in successful!
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
